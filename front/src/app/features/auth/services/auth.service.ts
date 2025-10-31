@@ -10,7 +10,7 @@ import { SessionInformation } from 'src/app/interfaces/sessionInformation.interf
 })
 export class AuthService {
 
-  private pathService = 'api/auth';
+  private pathService = 'http://localhost:8080/api/auth';
 
   constructor(private httpClient: HttpClient) { }
 

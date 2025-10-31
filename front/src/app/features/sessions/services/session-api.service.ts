@@ -8,7 +8,7 @@ import { Session } from '../interfaces/session.interface';
 })
 export class SessionApiService {
 
-  private pathService = 'api/session';
+  private pathService = 'http://localhost:8080/api/session';
 
   constructor(private httpClient: HttpClient) {
   }
