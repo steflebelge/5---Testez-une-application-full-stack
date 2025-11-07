@@ -12,6 +12,21 @@ describe('AuthGuard e2e', () => {
         admin: false
       }
     }).as('login');
+
+    // 🔹 Mock du "me" (GET user info)
+    cy.intercept('GET', '/api/user/1', {
+      statusCode: 200,
+      body: {
+        id: 1,
+        firstName: 'aze',
+        lastName: 'aze',
+        email: 'aze@aze.aze',
+        admin: false,
+        createdAt: '2025-01-01T00:00:00.000Z',
+        updatedAt: '2025-01-02T00:00:00.000Z'
+      }
+    }).as('getUser');
+
   });
 
   it('should redirect to /login when not logged in', () => {
@@ -41,6 +56,9 @@ describe('AuthGuard e2e', () => {
 
     // On visite la page "me"
     cy.get('span[routerlink=me]').click();
+
+    // Attente du mock user
+    cy.wait('@getUser');
 
     // Vérifie qu'on n'est PAS redirigé vers /login
     cy.url().should('include', '/me');

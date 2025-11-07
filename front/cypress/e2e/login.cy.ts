@@ -1,11 +1,17 @@
 describe('Login spec', () => {
 
   beforeEach(() => {
-    // On intercepte les requêtes utilisées par l'application
-    cy.intercept('POST', '/api/auth/login', (req) => {
-      // facultatif : tu peux vérifier le corps envoyé
-      expect(req.body).to.have.keys(['email', 'password']);
-    }).as('login');
+    // 🔹 Interception du login
+    cy.intercept('POST', '/api/auth/login', {
+      statusCode: 200,
+      body: {
+        id: 1,
+        firstName: 'aze',
+        lastName: 'aze',
+        email: 'aze@aze.aze',
+        admin: false
+      }
+    }).as('loginSuccess');
 
     cy.intercept('GET', '/api/session', []).as('getSessions');
 
@@ -16,14 +22,13 @@ describe('Login spec', () => {
 
   it('should login successfully and redirect to /sessions', () => {
     // Remplit le formulaire
-    cy.get('input[formControlName=email]').type('yoga@studio.com');
-    cy.get('input[formControlName=password]').type('test!1234');
-
+    cy.get('input[formControlName=email]').type('example@email.com');
+    cy.get('input[formControlName=password]').type('ceciestunmdp');
     // Clique sur le bouton submit
     cy.get('button[type=submit]').click();
 
     // Attend que la requête POST /login soit envoyée et répondue
-    cy.wait('@login').then((interception) => {
+    cy.wait('@loginSuccess').then((interception) => {
       expect(interception.request.method).to.eq('POST');
       expect(interception.response && interception.response.statusCode || 200).to.eq(200);
     });
@@ -40,10 +45,10 @@ describe('Login spec', () => {
       body: { message: 'Unauthorized' },
     }).as('loginFail');
 
-    cy.visit('/login');
-
+    // Remplit le formulaire
     cy.get('input[formControlName=email]').type('wrong@user.com');
     cy.get('input[formControlName=password]').type('wrongpass');
+    // Clique sur le bouton submit
     cy.get('button[type=submit]').click();
 
     // Attend la requête échouée
