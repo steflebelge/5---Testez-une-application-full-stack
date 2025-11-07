@@ -33,7 +33,7 @@ describe('UserService', () => {
       expect(user).toEqual(mockUser);
     });
 
-    const req = httpMock.expectOne('api/user/1');
+    const req = httpMock.expectOne('http://localhost:8080/api/user/1');
     expect(req.request.method).toBe('GET');
     req.flush(mockUser);
   });
@@ -43,7 +43,7 @@ describe('UserService', () => {
       expect(res).toEqual({});
     });
 
-    const req = httpMock.expectOne('api/user/1');
+    const req = httpMock.expectOne('http://localhost:8080/api/user/1');
     expect(req.request.method).toBe('DELETE');
     req.flush({});
   });

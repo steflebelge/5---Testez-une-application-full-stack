@@ -37,7 +37,7 @@ describe('SessionsService', () => {
       expect(sessions).toEqual(mockSessions);
     });
 
-    const req = httpMock.expectOne('api/session');
+    const req = httpMock.expectOne('http://localhost:8080/api/session');
     expect(req.request.method).toBe('GET');
     req.flush(mockSessions);
   });
@@ -47,7 +47,7 @@ describe('SessionsService', () => {
       expect(res).toEqual({});
     });
 
-    const req = httpMock.expectOne('api/session/123');
+    const req = httpMock.expectOne('http://localhost:8080/api/session/123');
     expect(req.request.method).toBe('DELETE');
     req.flush({});
   });
@@ -60,7 +60,7 @@ describe('SessionsService', () => {
       expect(response).toEqual(mockResponse);
     });
 
-    const req = httpMock.expectOne('api/session');
+    const req = httpMock.expectOne('http://localhost:8080/api/session');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(newSession);
     req.flush(mockResponse);
@@ -73,7 +73,7 @@ describe('SessionsService', () => {
       expect(response).toEqual(updatedSession);
     });
 
-    const req = httpMock.expectOne('api/session/1');
+    const req = httpMock.expectOne('http://localhost:8080/api/session/1');
     expect(req.request.method).toBe('PUT');
     expect(req.request.body).toEqual(updatedSession);
     req.flush(updatedSession);
@@ -84,7 +84,7 @@ describe('SessionsService', () => {
       expect(response).toBeUndefined();
     });
 
-    const req = httpMock.expectOne('api/session/1/participate/42');
+    const req = httpMock.expectOne('http://localhost:8080/api/session/1/participate/42');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toBeNull();
     req.flush(null);
@@ -95,7 +95,7 @@ describe('SessionsService', () => {
       expect(response).toBeUndefined();
     });
 
-    const req = httpMock.expectOne('api/session/1/participate/42');
+    const req = httpMock.expectOne('http://localhost:8080/api/session/1/participate/42');
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
   });

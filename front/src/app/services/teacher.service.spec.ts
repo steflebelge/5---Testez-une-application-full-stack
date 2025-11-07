@@ -39,7 +39,7 @@ describe('TeacherService', () => {
       expect(teachers).toEqual(mockTeachers);
     });
 
-    const req = httpMock.expectOne('api/teacher');
+    const req = httpMock.expectOne('http://localhost:8080/api/teacher');
     expect(req.request.method).toBe('GET');
     req.flush(mockTeachers);
   });
@@ -51,7 +51,7 @@ describe('TeacherService', () => {
       expect(teacher).toEqual(mockTeacher);
     });
 
-    const req = httpMock.expectOne('api/teacher/10');
+    const req = httpMock.expectOne('http://localhost:8080/api/teacher/10');
     expect(req.request.method).toBe('GET');
     req.flush(mockTeacher);
   });
