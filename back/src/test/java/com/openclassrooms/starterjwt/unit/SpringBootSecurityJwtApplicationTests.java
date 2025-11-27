@@ -1,5 +1,6 @@
-package com.openclassrooms.starterjwt;
+package com.openclassrooms.starterjwt.unit;
 
+import com.openclassrooms.starterjwt.SpringBootSecurityJwtApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

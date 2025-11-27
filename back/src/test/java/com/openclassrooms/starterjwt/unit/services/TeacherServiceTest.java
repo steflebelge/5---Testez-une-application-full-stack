@@ -1,6 +1,6 @@
-package com.openclassrooms.starterjwt.services;
+package com.openclassrooms.starterjwt.unit.services;
 
-import com.openclassrooms.starterjwt.models.Teacher;
+import com.openclassrooms.starterjwt.unit.models.Teacher;
 import com.openclassrooms.starterjwt.repository.TeacherRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
