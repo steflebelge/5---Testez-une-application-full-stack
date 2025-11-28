@@ -9,6 +9,11 @@
     "src/main.ts",
     "src/polyfills.ts"
   ],
+  "plugins": [
+    {
+      "name": "babel-plugin-istanbul"
+    }
+  ],
   "include": [
     "src/**/*.spec.ts",
     "src/**/*.d.ts"

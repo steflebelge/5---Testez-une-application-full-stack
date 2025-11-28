@@ -34,7 +34,10 @@
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "customWebpackConfig": {
+              "path": "./cypress/coverage.webpack.js"
+            }
           },
           "configurations": {
             "production": {
@@ -66,13 +69,15 @@
               "sourceMap": true,
               "namedChunks": true
             },
-            "e2e": {
+            "coverage": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true,
-              "vendorChunk": true,
               "customWebpackConfig": {
-                "path": "./cypress/coverage.webpack.ts"
+                "path": "./cypress/coverage.webpack.js"
               }
             }
           },
@@ -81,8 +86,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "project-name:build",
-            "proxyConfig": "src/proxy.config.json"
+            "browserTarget": "yoga:build"
           },
           "configurations": {
             "production": {
@@ -91,19 +95,12 @@
             "development": {
               "browserTarget": "yoga:build:development"
             }
-          },
-          "defaultConfiguration": "development"
-        },
-        "serve-coverage": {
-          "builder": "@angular-builders/custom-webpack:dev-server",
-          "options": {
-            "browserTarget": "yoga:build:e2e"
           }
         },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+        "serve-coverage": {
+          "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "yoga:build"
+            "browserTarget": "yoga:build:coverage"
           }
         },
         "test": {
@@ -118,51 +115,6 @@
               "src/styles.scss"
             ],
             "scripts": []
-          }
-        },
-        "cypress-run": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "devServerTarget": "yoga:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "yoga:serve:production"
-            }
-          }
-        },
-        "cypress-open": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "watch": true,
-            "headless": false
-          }
-        },
-        "e2e": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "devServerTarget": "yoga:serve-coverage",
-            "watch": true,
-            "headless": false
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "yoga:serve-coverage:production"
-            }
-          }
-        },
-        "e2e-ci": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "browser": "chrome",
-            "devServerTarget": "yoga:serve-coverage",
-            "headless": true,
-            "watch": false
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "yoga:serve-coverage:production"
-            }
           }
         }
       }
