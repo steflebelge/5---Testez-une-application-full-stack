@@ -70,4 +70,22 @@ class UserDetailsServiceImplTest {
         assertEquals("User Not Found with email: unknown@example.com", ex.getMessage());
         verify(userRepository, times(1)).findByEmail("unknown@example.com");
     }
+
+    @Test
+    void loadUserByUsername_shouldRejectNullUsername() {
+        assertThrows(UsernameNotFoundException.class, () -> service.loadUserByUsername(null));
+        verify(userRepository).findByEmail(null);
+    }
+
+    @Test
+    void loadUserByUsername_shouldRejectEmptyUsername() {
+        when(userRepository.findByEmail("")).thenReturn(Optional.empty());
+
+        assertThrows(
+                UsernameNotFoundException.class,
+                () -> service.loadUserByUsername("")
+        );
+
+        verify(userRepository).findByEmail("");
+    }
 }

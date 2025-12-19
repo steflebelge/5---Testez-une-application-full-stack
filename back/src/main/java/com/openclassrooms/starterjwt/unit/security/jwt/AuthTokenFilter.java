@@ -21,10 +21,10 @@ import com.openclassrooms.starterjwt.unit.security.services.UserDetailsServiceIm
 
 public class AuthTokenFilter extends OncePerRequestFilter {
   @Autowired
-  JwtUtils jwtUtils;
+  public JwtUtils jwtUtils;
 
   @Autowired
-  UserDetailsServiceImpl userDetailsService;
+  public UserDetailsServiceImpl userDetailsService;
 
   private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
@@ -53,7 +53,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
-  private String parseJwt(HttpServletRequest request) {
+  public String parseJwt(HttpServletRequest request) {
     String headerAuth = request.getHeader("Authorization");
 
     if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {

@@ -182,4 +182,20 @@ class AuthIntegrationIT {
                         .content(json))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void login_shouldHandleMissingUserGracefully() throws Exception {
+        // on ne crée pas l'utilisateur dans la base
+        String json = """
+        {
+            "email": "ghost@example.com",
+            "password": "any"
+        }
+        """;
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isUnauthorized());
+    }
 }

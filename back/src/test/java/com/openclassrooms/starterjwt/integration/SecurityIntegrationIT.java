@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.starterjwt.unit.models.User;
 import com.openclassrooms.starterjwt.repository.UserRepository;
+import com.openclassrooms.starterjwt.unit.security.WebSecurityConfig;
+import com.openclassrooms.starterjwt.unit.security.jwt.AuthTokenFilter;
 import com.openclassrooms.starterjwt.unit.security.jwt.JwtUtils;
 
+import com.openclassrooms.starterjwt.unit.security.services.UserDetailsServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.http.MediaType;
 
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.test.context.ActiveProfiles;
@@ -28,6 +32,8 @@ import java.util.Date;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -51,6 +57,9 @@ class SecurityIntegrationIT {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    private WebSecurityConfig config;
 
     Long mainUserId;
 
@@ -176,5 +185,49 @@ class SecurityIntegrationIT {
                 .andExpect(jsonPath("$.error").value("Unauthorized"))
                 .andExpect(jsonPath("$.status").value(401))
                 .andExpect(jsonPath("$.path").exists());
+    }
+
+
+    @Test
+    void contextLoads() {
+        assertNotNull(config);
+        assertNotNull(passwordEncoder);
+    }
+
+
+    @Test
+    void authEndpointsShouldBePublic() throws Exception {
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType("application/json")
+                        .content("{\"email\":\"bad\",\"password\":\"bad\"}"))
+                .andExpect(result -> assertTrue(result.getResponse().getStatus() != 403));
+    }
+
+    @Test
+    void apiEndpointsShouldRequireAuth() throws Exception {
+        mockMvc.perform(get("/api/sessions"))
+                .andExpect(status().isUnauthorized());
+    }
+
+
+
+    @Test
+    void parseJwt_shouldReturnNull_whenHeaderIsMissingOrMalformed() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        // pas de header → hasText(headerAuth) == false
+        AuthTokenFilter filter = new AuthTokenFilter();
+        filter.jwtUtils = mock(JwtUtils.class);
+        filter.userDetailsService = mock(UserDetailsServiceImpl.class);
+
+        String jwt = filter.parseJwt(request);
+
+        assertNull(jwt);
+
+        // header présent mais pas "Bearer "
+        request.addHeader("Authorization", "NotBearer token");
+        jwt = filter.parseJwt(request);
+
+        assertNull(jwt);
     }
 }

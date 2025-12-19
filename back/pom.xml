@@ -111,10 +111,15 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.10</version>
                 <configuration>
-                    <!-- exclure tous les DTO -->
+                    <!-- exclure tous les DTO, models, mapper, exceptions, repository, payload -->
                     <excludes>
+                        <exclude>com/openclassrooms/starterjwt/SpringBootSecurityJwtApplication.class</exclude>
                         <exclude>com/openclassrooms/starterjwt/dto/**</exclude>
-                        <exclude>com/openclassrooms/starterjwt/mapper/*Impl.class</exclude>
+                        <exclude>com/openclassrooms/starterjwt/exception/**</exclude>
+                        <exclude>com/openclassrooms/starterjwt/repository/**</exclude>
+                        <exclude>com/openclassrooms/starterjwt/unit/mapper/**</exclude>
+                        <exclude>com/openclassrooms/starterjwt/unit/models/**</exclude>
+                        <exclude>com/openclassrooms/starterjwt/unit/payload/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>

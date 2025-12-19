@@ -26,23 +26,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class TeacherIntegrationIT {
-
+    private Long teacherId;
+    private Long loginUserId;
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     TeacherRepository teacherRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
     UserRepository userRepository;
-    private Long teacherId;
-    private Long loginUserId;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     SessionRepository sessionRepository;
-
 
 
     @BeforeEach

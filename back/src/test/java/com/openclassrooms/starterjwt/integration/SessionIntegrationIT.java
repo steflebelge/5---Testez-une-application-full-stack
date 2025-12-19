@@ -3,6 +3,7 @@ package com.openclassrooms.starterjwt.integration;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.openclassrooms.starterjwt.exception.NotFoundException;
 import com.openclassrooms.starterjwt.unit.models.Session;
 import com.openclassrooms.starterjwt.unit.models.Teacher;
 import com.openclassrooms.starterjwt.unit.models.User;
@@ -11,6 +12,7 @@ import com.openclassrooms.starterjwt.repository.SessionRepository;
 import com.openclassrooms.starterjwt.repository.TeacherRepository;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 
+import com.openclassrooms.starterjwt.unit.services.SessionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -330,5 +332,42 @@ class SessionIntegrationIT {
         mockMvc.perform(delete("/api/session/" + sessionId + "/participate/" + otherUserId)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void noLongerParticipate_shouldThrowNotFound_whenSessionDoesNotExist() {
+        SessionService service = new SessionService(sessionRepository, userRepository);
+
+        assertThrows(NotFoundException.class, () -> service.noLongerParticipate(99999L, mainUserId));
+    }
+
+    @Test
+    void noLongerParticipate_shouldRemoveUserFromSession() {
+        Session session = sessionRepository.findById(sessionId).get();
+        User user = userRepository.findById(otherUserId).get();
+        session.getUsers().add(user);
+        sessionRepository.save(session);
+
+        SessionService service = new SessionService(sessionRepository, userRepository);
+
+        // retirer l'utilisateur
+        service.noLongerParticipate(sessionId, otherUserId);
+
+        Session updated = sessionRepository.findById(sessionId).get();
+        assertFalse(updated.getUsers().contains(user));
+    }
+
+    @Test
+    void participate_shouldThrowNotFound_whenSessionDoesNotExist() {
+        SessionService service = new SessionService(sessionRepository, userRepository);
+
+        assertThrows(NotFoundException.class, () -> service.participate(99999L, mainUserId));
+    }
+
+    @Test
+    void participate_shouldThrowNotFound_whenUserDoesNotExist() {
+        SessionService service = new SessionService(sessionRepository, userRepository);
+
+        assertThrows(NotFoundException.class, () -> service.participate(sessionId, 99999L));
     }
 }
