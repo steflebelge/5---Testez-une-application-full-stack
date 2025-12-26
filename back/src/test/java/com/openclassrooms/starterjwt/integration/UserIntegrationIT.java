@@ -173,28 +173,6 @@ class UserIntegrationIT {
                 .andExpect(status().isBadRequest());
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void emptyConstructor_shouldInitAllFieldsToNull() {
         User u = new User();
@@ -274,26 +252,6 @@ class UserIntegrationIT {
         assertEquals(now, u.getCreatedAt());
         assertEquals(now, u.getUpdatedAt());
     }
-
-//    @Test
-//    void equalsAndHashCode_shouldBeCorrect() {
-//        User u1 = new User();
-//        u1.setId(1L);
-//
-//        User u2 = new User();
-//        u2.setId(1L);
-//
-//        assertEquals(u1, u2);
-//        assertEquals(u1.hashCode(), u2.hashCode());
-//        assertTrue(u1.canEqual(u2));
-//    }
-//
-//    @Test
-//    void equals_shouldReturnFalseWithDifferentTypes() {
-//        User u = new User();
-//        assertNotEquals(u, "string");
-//        assertFalse(u.canEqual("string"));
-//    }
 
     @Test
     void toString_shouldContainEmailWhenSet() {

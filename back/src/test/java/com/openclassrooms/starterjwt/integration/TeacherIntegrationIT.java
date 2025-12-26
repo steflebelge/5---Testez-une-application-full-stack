@@ -52,7 +52,6 @@ class TeacherIntegrationIT {
                 .firstName("John")
                 .lastName("Doe")
                 .build());
-
         teacherId = teacher.getId();
 
         // second teacher pour testé la liste
@@ -62,7 +61,6 @@ class TeacherIntegrationIT {
                 .build());
 
         // user pour login
-        userRepository.deleteAll();
         User loginUser = userRepository.save(
                 new User(
                         "john@example.com",
@@ -132,5 +130,16 @@ class TeacherIntegrationIT {
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].firstName").exists())
                 .andExpect(jsonPath("$[1].firstName").exists());
+    }
+
+
+    // ---------------------------------------------------------------------
+    // TEST: Security
+    // ---------------------------------------------------------------------
+
+    @Test
+    void getTeacher_shouldReturn401_whenNotAuthenticated() throws Exception {
+        mockMvc.perform(get("/api/teacher/" + teacherId))
+                .andExpect(status().isUnauthorized());
     }
 }

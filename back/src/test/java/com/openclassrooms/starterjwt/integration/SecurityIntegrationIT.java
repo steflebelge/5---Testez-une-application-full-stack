@@ -212,10 +212,9 @@ class SecurityIntegrationIT {
 
 
     @Test
-    void parseJwt_shouldReturnNull_whenHeaderIsMissingOrMalformed() throws Exception {
+    void parseJwt_shouldReturnNull_whenHeaderIsMissing() {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        // pas de header → hasText(headerAuth) == false
         AuthTokenFilter filter = new AuthTokenFilter();
         filter.jwtUtils = mock(JwtUtils.class);
         filter.userDetailsService = mock(UserDetailsServiceImpl.class);
@@ -223,11 +222,21 @@ class SecurityIntegrationIT {
         String jwt = filter.parseJwt(request);
 
         assertNull(jwt);
+    }
 
-        // header présent mais pas "Bearer "
+
+    @Test
+    void parseJwt_shouldReturnNull_whenHeaderIsMalformed() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Authorization", "NotBearer token");
-        jwt = filter.parseJwt(request);
+
+        AuthTokenFilter filter = new AuthTokenFilter();
+        filter.jwtUtils = mock(JwtUtils.class);
+        filter.userDetailsService = mock(UserDetailsServiceImpl.class);
+
+        String jwt = filter.parseJwt(request);
 
         assertNull(jwt);
     }
+
 }

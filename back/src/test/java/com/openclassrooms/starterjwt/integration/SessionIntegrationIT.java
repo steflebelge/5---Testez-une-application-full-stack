@@ -2,37 +2,31 @@ package com.openclassrooms.starterjwt.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.openclassrooms.starterjwt.exception.NotFoundException;
-import com.openclassrooms.starterjwt.unit.models.Session;
-import com.openclassrooms.starterjwt.unit.models.Teacher;
-import com.openclassrooms.starterjwt.unit.models.User;
-
 import com.openclassrooms.starterjwt.repository.SessionRepository;
 import com.openclassrooms.starterjwt.repository.TeacherRepository;
 import com.openclassrooms.starterjwt.repository.UserRepository;
-
+import com.openclassrooms.starterjwt.unit.models.Session;
+import com.openclassrooms.starterjwt.unit.models.Teacher;
+import com.openclassrooms.starterjwt.unit.models.User;
 import com.openclassrooms.starterjwt.unit.services.SessionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Date;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -114,11 +108,11 @@ class SessionIntegrationIT {
     // ----------------------------------------------------------------------
     private String loginAndGetToken() throws Exception {
         String json = """
-            {
-              "email":"john@example.com",
-              "password":"secret123"
-            }
-            """;
+                {
+                  "email":"john@example.com",
+                  "password":"secret123"
+                }
+                """;
 
         MvcResult result = mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -142,6 +136,12 @@ class SessionIntegrationIT {
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1));
+    }
+
+    @Test
+    void findAll_shouldReturn401_whenNotAuthenticated() throws Exception {
+        mockMvc.perform(get("/api/sessions"))
+                .andExpect(status().isUnauthorized());
     }
 
     // ----------------------------------------------------------------------
@@ -176,6 +176,7 @@ class SessionIntegrationIT {
                 .andExpect(status().isBadRequest());
     }
 
+
     // ----------------------------------------------------------------------
     // TEST POST /api/session
     // ----------------------------------------------------------------------
@@ -185,14 +186,14 @@ class SessionIntegrationIT {
         String token = loginAndGetToken();
 
         String json = """
-        {
-            "name": "New Session",
-            "description": "Test desc",
-            "date": "2025-01-01T10:00:00",
-            "teacher_id": %d,
-            "users": []
-        }
-        """.formatted(teacherId);
+                {
+                    "name": "New Session",
+                    "description": "Test desc",
+                    "date": "2025-01-01T10:00:00",
+                    "teacher_id": %d,
+                    "users": []
+                }
+                """.formatted(teacherId);
 
         mockMvc.perform(post("/api/session")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -213,14 +214,14 @@ class SessionIntegrationIT {
         String token = loginAndGetToken();
 
         String json = """
-        {
-            "name": "Updated Session",
-            "description": "Updated desc",
-            "date": "2025-01-01T10:00:00",
-            "teacher_id": %d,
-            "users": []
-        }
-        """.formatted(teacherId);
+                {
+                    "name": "Updated Session",
+                    "description": "Updated desc",
+                    "date": "2025-01-01T10:00:00",
+                    "teacher_id": %d,
+                    "users": []
+                }
+                """.formatted(teacherId);
 
         mockMvc.perform(put("/api/session/" + sessionId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -228,6 +229,26 @@ class SessionIntegrationIT {
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Updated Session"));
+    }
+
+
+    @Test
+    void update_shouldReturn400_whenIdIsNotANumber() throws Exception {
+
+        String token = loginAndGetToken();
+
+        String json = """
+                {
+                    "name": "Updated session",
+                    "description": "desc"
+                }
+                """;
+
+        mockMvc.perform(put("/api/session/abc")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
+                        .content(json))
+                .andExpect(status().isBadRequest());
     }
 
     // ----------------------------------------------------------------------
